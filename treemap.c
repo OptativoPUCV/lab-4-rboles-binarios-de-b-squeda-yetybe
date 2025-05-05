@@ -130,32 +130,24 @@ Pair * searchTreeMap(TreeMap * tree, void* key)
     if (tree == NULL || key == NULL) return NULL;
 
     TreeNode * aux = tree->root;
-    if (aux != NULL && is_equal(tree, key, aux->pair->key))
-    {
-        tree->current = aux;
-        return aux->pair;
-    }
-    while(1)
-    {
-        if (tree->lower_than(key ,aux->pair->key))
-        {
-            aux = aux->left;
-        }
-        else
-        {
-            aux = aux->right;
-        }
 
-        if (aux != NULL && is_equal(tree, key, aux->pair->key))
-        {
+    while (aux != NULL)
+    {
+        if (is_equal(tree, key, aux->pair->key)) {
             tree->current = aux;
             return aux->pair;
         }
-        
+
+        if (tree->lower_than(key, aux->pair->key)) {
+            aux = aux->left;
+        } else {
+            aux = aux->right;
+        }
     }
 
-    return NULL;
+    return NULL; // si no encontró la clave
 }
+
 
 
 Pair * upperBound(TreeMap * tree, void* key) {
