@@ -48,10 +48,60 @@ TreeMap * createTreeMap(int (*lower_than) (void* key1, void* key2))
     return map;
 }
 
-
-void insertTreeMap(TreeMap * tree, void* key, void * value) {
-
+void insertTreeMap(TreeMap * tree, void* key, void * value)
+{
+    if (tree == NULL || key == NULL || value == NULL )return;
+    TreeNode * new = createTreeNode(key , value);
+    
+    if (tree == NULL)
+    {
+        tree->root = new;
+        tree->current = new;
+        return;
+    }
+    else
+    {
+        TreeNode * temp = tree->root;
+        
+        while (1)
+        {
+            if (key < temp->pair->key)
+            {
+                if (temp->left == NULL)
+                {
+                    temp->left = new;
+                    new->parent = temp;
+                    break;
+                }
+                else
+                {
+                    temp = temp->left;
+                }
+            }
+            else if (key > temp->pair->key)
+            {
+                if (temp->right == NULL)
+                {
+                    temp->right = new;
+                    new->parent = temp;
+                    break;
+                }
+                else
+                {
+                    temp = temp->right;
+                }
+            }
+            else
+            {
+                temp->pair->value = value;
+                free(new);
+                break;
+            }
+        }
+    }
 }
+
+
 
 TreeNode * minimum(TreeNode * x){
 
@@ -75,7 +125,35 @@ void eraseTreeMap(TreeMap * tree, void* key){
 
 
 
-Pair * searchTreeMap(TreeMap * tree, void* key) {
+Pair * searchTreeMap(TreeMap * tree, void* key) 
+{
+    if (tree == NULL || key == NULL) return NULL;
+
+    TreeNode * aux = tree->root;
+    if (aux != NULL && is_equal(tree, key, aux->pair->key))
+    {
+        tree->current = aux;
+        return aux->pair;
+    }
+    while(1)
+    {
+        if (tree->lower_than(key ,aux->pair->key))
+        {
+            aux = aux->left;
+        }
+        else
+        {
+            aux = aux->right;
+        }
+
+        if (aux != NULL && is_equal(tree, key, aux->pair->key))
+        {
+            tree->current = aux;
+            return aux->pair;
+        }
+        
+    }
+
     return NULL;
 }
 
