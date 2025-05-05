@@ -101,15 +101,75 @@ void insertTreeMap(TreeMap * tree, void* key, void * value)
 
 
 
-TreeNode * minimum(TreeNode * x){
-
-    return NULL;
+TreeNode * minimum(TreeNode * x)
+{
+    if (x == NULL) return NULL;
+    while( x->left != NULL)
+    {
+        x = x->left;
+    }
+    return x;
 }
 
 
-void removeNode(TreeMap * tree, TreeNode* node) {
+void removeNode(TreeMap * tree, TreeNode* node) 
+{
+   if (node == NULL) return;
+   TreeNode * parent = node->parent;
 
+   if(node->left == NULL && node->right == NULL) 
+   {
+    if(node != tree->root) 
+    {
+        if(parent->left == node)
+            parent->left = NULL;
+        else
+            parent->right = NULL;
+    } 
+    else 
+    {
+        tree->root = NULL;
+    }
+
+    free(node);
 }
+
+else if(node->left == NULL || node->right == NULL) 
+{
+    TreeNode* child;
+    if(node->left != NULL)
+        child = node->left;
+    else
+        child = node->right;
+
+    if(node != tree->root) 
+    {
+        if(parent->left == node)
+            parent->left = child;
+        else
+            parent->right = child;
+        child->parent = parent; 
+    } 
+    else 
+    {
+        tree->root = child;
+        child->parent = NULL;  
+    }
+
+    free(node);
+}
+
+else 
+{
+    TreeNode* proximo = minimum(node->right);
+    void * proximKey = proximo->pair->key;
+    void* proximValue = proximo->pair->value;
+    removeNode(tree, proximo);  
+    node->pair->key = proximKey;
+    node->pair->value = proximValue;
+}
+}
+
 
 void eraseTreeMap(TreeMap * tree, void* key){
     if (tree == NULL || tree->root == NULL) return;
@@ -145,7 +205,6 @@ Pair * searchTreeMap(TreeMap * tree, void* key)
 
     return NULL; 
 }
-
 
 
 Pair * upperBound(TreeMap * tree, void* key) {
